@@ -15,7 +15,16 @@ Including another URLconf
 """
 from django.conf.urls import url
 from django.contrib import admin
+from django.conf.urls import include
+from django.conf.urls.static import static
+from django.conf import settings
+from pictaroo import views
 
 urlpatterns = [
+    #URL Mapping for the main page
+    url(r'^$', views.index, name='index'),
+    url(r'^pictaroo/', include('pictaroo.urls')),
+    #above maps any URLs starting with pictaroo/ to be
+    #handled by the pictaroo application
     url(r'^admin/', admin.site.urls),
 ]
