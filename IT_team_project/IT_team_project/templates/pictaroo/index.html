@@ -1,0 +1,64 @@
+{% extends 'pictaroo/base.html' %}
+{% load staticfiles %}
+{% block title_block %}
+    Index
+{% endblock %}
+
+{% block body_block %}
+        <h1>Pictaroo </h1>
+            {% if user.is_authenticated %}
+                Welcome Back {{ user.username }}!
+            {% else %}
+                Please Register your account
+            {% endif %}
+
+
+        <div>
+            <div>
+                <h3>Most Liked Categories</h3>
+            </div>
+            {% if categories %}
+        <ul>
+            {% for category in categories %}
+            <li>
+                <a href="/pictaroo/category/{{ category.slug }}">{{ category.name}}</a>
+            </li>
+            {% endfor %}
+        </ul>
+        {% else %}
+            <strong> There are no categories present. </strong>
+        {% endif %}
+        </div>
+
+        <div>
+             <h3>Most Viewed Pages </h3>
+            {% if pages %}
+                <ul>
+                    {% for page in pages %}
+                        <li>
+                            <a href="{{ page.url }}">{{ page.title}}</a>
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <strong>No Pages currently in category. </strong>
+            {% endif %}
+
+        <br />
+
+        {% if user.is_authenticated %}
+
+        {% else %}
+        <form id="login_form" method="post" action="{% url 'login' %}">
+        {% csrf_token %}
+        Username: <input type="text" name="username" value="" size="50" />
+        <br />
+        Password: <input type="password" name="password" value="" size="50" />
+        <br />
+        <input type="submit" value="submit" />
+        </form>
+        {% endif %}
+
+        <p> Page visits: {{ visits }}</p>
+        </div>
+{% endblock %}
