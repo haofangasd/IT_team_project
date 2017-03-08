@@ -11,14 +11,17 @@ urlpatterns = [
     url(r'^category/(?P<category_name_slug>[\w\-]+)/$',
         views.show_category, name='show_category'),
 
-    url(r'^category/(?P<category_name_slug>[\w\-]+)/add_page/$',
-        views.add_page, name='add_page'),
+    url(r'^category/(?P<category_name_slug>[\w\-]+)/add_image/$',
+        views.add_image, name='add_image'),
 
-    url(r'^register/$', views.register, name='register'), #New pattern
+    url(r'^my_account/(?P<username>[\w\-]+)/$', views.my_account, name='my_account'),
 
-    url(r'^login/$', views.user_login, name='login'), #Login URL
+    url(r'^my_favourites/', views.my_favourites, name='my_favourites'),
 
-    url(r'^restricted/', views.restricted, name='restricted'),
+    url(r'^my_comments/', views.my_comments, name='my_comments'),
 
-    url(r'^logout/$', views.user_logout, name='logout'),
+    url(r'^my_uploads/', views.my_uploads, name='my_uploads'),
+
+    url(r'^register_profile/$', views.register_profile, name='profile'),
+
 ]

@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'pictaroo',
+    'registration', #add in the registration package Chapter 11
 ]
 
 MIDDLEWARE = [
@@ -126,15 +127,22 @@ SESSION_EXPIRE_AT_BROWSER_CLOSE = False
 MEDIA_ROOT = MEDIA_DIR
 MEDIA_URL = '/media/'
 
-
-LOGIN_URL ='/rango/login/'
-
-
+LOGIN_URL ='/accounts/login/'
 
 # Static files (CSS, JavaScript, Images)
 STATICFILES_DIRS = [STATIC_DIR, ]
 
-
-
 # https://docs.djangoproject.com/en/1.10/howto/static-files/
 STATIC_URL = '/static/'
+
+# If True, users can register
+REGISTRATION_OPEN = True
+# One-week activation window; you may, of course, use a different value.
+ACCOUNT_ACTIVATION_DAYS = 7
+# If True, the user will be automatically logged in.
+REGISTRATION_AUTO_LOGIN = True
+# The page you want users to arrive at after they successfully log in
+LOGIN_REDIRECT_URL = '/pictaroo/my_account/'
+# The page users are directed to if they are not logged in,
+# and are trying to access pages requiring authentication
+LOGIN_URL = '/accounts/login/'

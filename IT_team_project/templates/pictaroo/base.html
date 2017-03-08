@@ -3,14 +3,13 @@
 
 <head lang="en">
     <meta charset="UTF-8">
-    <title>Pictaroo
+    <title>
     {% block title_block %}
         Welcome to Pictaroo - A picture sharing website!
     {% endblock %}
     </title>
 </head>
 <body>
-
     <div>
     {% block body_block %}
         this is body_block's default content
@@ -20,12 +19,12 @@
     <div>
         <ul>
             {% if user.is_authenticated %}
-                <li><a href="{% url 'restricted' %}"> Restricted Page</a></li>
-                <li><a href="{% url 'logout' %}">Logout</a></li>
-                <li><a href="{% url 'add_category' %}">Add new Category</a></li>
+                <li><a href="{% url 'my_account' user.username %}"> My Account</a></li>
+                <li><a href="{% url 'auth_logout' %}?next=/pictaroo/">Logout</a></li>
+                <li><a href="{% url 'add_category' %}">Add Category</a></li>
             {% else %}
-                <li><a href="{% url 'register' %}">Sign Up</a></li>
-                <li><a href="{% url 'login' %}">Login</a></li>
+                <li><a href="{% url 'registration_register' %}">Sign Up</a></li>
+                <li><a href="{% url 'auth_login' %}">Login</a></li>
             {% endif %}
 
             <li><a href="{% url 'about' %}">About</a></li>

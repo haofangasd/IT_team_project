@@ -1,19 +1,17 @@
-
 from django.http import HttpResponseRedirect, HttpResponse
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login
 from django.core.urlresolvers import reverse
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout
+from django.contrib.auth.models import User
 
 #Import the category model
-from pictaroo.models import Category
-from pictaroo.models import Page
-from pictaroo.forms import CategoryForm
-from pictaroo.forms import PageForm
-from pictaroo.forms import UserForm, UserProfileForm
+from pictaroo.models import Category, Image, UserProfile
+from pictaroo.forms import CategoryForm, ImageForm, UserProfileForm
 from datetime import datetime
 
+#geez dem cookies
 def get_server_side_cookie(request, cookie, default_val=None):
     val = request.session.get(cookie)
     if not val:
@@ -47,9 +45,9 @@ def visitor_cookie_handler(request):
 def index(request):
     request.session.set_test_cookie()
     category_list = Category.objects.order_by('-likes')[:5]
-    page_list = Page.objects.order_by('-views')[:5]
+    image_list = Image.objects.order_by('-views')[:5]
 
-    context_dict={'categories':category_list,'pages':page_list}
+    context_dict={'categories':category_list,'images':image_list}
     #call function to handle the cookies
     visitor_cookie_handler(request)
     context_dict['visits'] = request.session['visits']
@@ -93,12 +91,12 @@ def show_category(request, category_name_slug):
         #so the .get() method returns one model instance or riases an exception
         category = Category.objects.get(slug=category_name_slug)
 
-        #Retrieve all of the associated pages
-        #note that filter() will return a list of page objects or an empty list
-        pages = Page.objects.filter(category=category)
+        #Retrieve all of the associated images
+        #note that filter() will return a list of image objects or an empty list
+        images = Image.objects.filter(category=category)
 
-        #add our results list to the template context under name pages
-        context_dict['pages'] = pages
+        #add our results list to the template context under name images
+        context_dict['images'] = images
         #we also add the category object from
         #the databse to the context dictionary
         #we'll use this in the template to verify that the category exist
@@ -108,7 +106,7 @@ def show_category(request, category_name_slug):
         #dont do anything -
         #the template will display the 'no category message for us'
         context_dict['category']=None
-        context_dict['pages']=None
+        context_dict['images']=None
 
 
         # Return a render response to send to the client
@@ -141,131 +139,81 @@ def add_category(request):
         # render the form with error message (if any)
     return render(request, 'pictaroo/add_category.html', {'form': form})
 
-def add_page(request, category_name_slug):
+def add_image(request, category_name_slug):
     try:
         category = Category.objects.get(slug=category_name_slug)
     except Category.DoesNotExist:
         category = None
 
-    form = PageForm()
+    form = ImageForm()
     if request.method == 'POST':
-        form = PageForm(request.POST)
+        form = ImageForm(request.POST)
         if form.is_valid():
             if category:
-                page = form.save(commit=False)
-                page.category = category
-                page.views= 0
-                page.save()
+                image = form.save(commit=False)
+                image.category = category
+                image.views= 0
+                image.save()
                 return show_category(request, category_name_slug)
             else:
                 print(form.errors)
 
     context_dict = {'form': form, 'category': category}
-    return render (request, 'pictaroo/add_page.html', context_dict)
+    return render (request, 'pictaroo/add_images.html', context_dict)
 
-def register(request):
-    #boolean value for telling the template
-    #whether the registration was successful
-    #set to false initially. Code changes value to
-    #true when registration succeeds
-    registered = False
 
-    #uf uts a HTTP post, we're interested in processing form data
-    if request.method == 'POST':
-        #Attempt to grab infomration from the raw form information
-        #note that we make use of both UserForm and UserProfileForm.
-        user_form = UserForm(data=request.POST)
-        profile_form = UserProfileForm(data=request.POST)
+@login_required
+def my_account(request, username):
+    try:
+        user = User.objects.get(username=username)
+    except User.DoesNotExist:
+        return redirect('index')
 
-        #If the two forms are valid
+    userprofile = UserProfile.objects.get_or_create(user=user)[0]
+    form =UserProfileForm({'picture':userprofile.picture })
 
-        if user_form.is_valid() and profile_form.is_valid():
-                #save the users form data to the data
-                user = user_form.save()
-
-                #Now sort out the user profile instance
-                #since we need to set the user attribute ourselves
-                #we set commit=False. This delays saving the model
-                #until we're ready to avoid integrity problems
-                profile = profile_form.save(commit=False)
-                profile.user = user
-
-                #did the user provide a profile picture?
-                #if so, we need to get it from the input form and
-                #put it in the UserProfile model
-                if 'picture' in request.FILES:
-                    profile.picture = request.FILES['picture']
-
-                #now we save the user profile model instance
-                profile.save()
-
-                #Update our variable to indicate that the template
-                #regustration was successful
-                registered = True;
+    if request.method =='POST':
+        form = UserProfileForm(request.POST, request.FILES, instance=userprofile)
+        if form.is_valid():
+            form.save(commit=True)
+            return redirect('my_account', user.username)
         else:
-                #Invalid form or forms - mistkaes or something else?
-                #print problems to the terminal
-                print(user_form.errors, profile_form.errors)
-    else:
-            #Not a HTTP POST, so we render our form using two modelForm instances
-            #these forms will be blank for user input
-            user_form = UserForm()
-            profile_form = UserProfileForm()
+            print(form.errors)
 
-        #Render the template depending on the context
-    return render(request, 'pictaroo/register.html', {'user_form': user_form,
-                                                       'profile_form': profile_form,
-                                                       'registered': registered })
-
-def user_login(request):
-    #if the request is a HTTP post, try to pull out the relevant information
-            if request.method =='POST':
-                #gather the username and password provided by the user
-                #this information is obtained from the login form
-                #we use request.POST.get('<variable>') as opposed
-                #to request.POST['<variable>'], because the
-                #request.POST.get('<variable>') returns None if the
-                #value does not exist, while request.POST['<variable>']
-                #will raise a keyError exception
-                username = request.POST.get('username')
-                password = request.POST.get('password')
-
-                #User django machinery to attempt to see if the username/passwprd
-                #combination is valid - a user  object is returned of it is
-                user = authenticate(username=username, password=password)
-
-                #if we have a User object, the detais are correct
-                #if none. no user with matching credentials was found
-
-                if user:
-                        #is the account active? it could have been disabled
-                        if user.is_active:
-                            #if the account is valid and active, we can log the user in
-                            #we'll send the user back to the homepage
-                            login(request, user)
-                            return HttpResponseRedirect(reverse('index'))
-                        else:
-                            #an inactive account was used - no logging in
-                            return HttpResponse("Your Pictaroo Account is Disabled")
-                else:
-                    #bad login details were provided, so we cant log the user in
-                    print("Invalid Login details: {0}, {1}".format(username,password))
-                    return HttpResponse("Invalid login details suppplied.")
-                #the request is not a HTTP POST, so display the login form
-                #this scenario would most likley be a HTTP GET
-            else:
-                #No context variables to pass to the template system, hence the
-                #blank dictionary object..
-                return render(request, 'pictaroo/login.html', {})
+    return render(request, 'pictaroo/myAccount.html', {'userprofile': userprofile, 'selecteduser': user, 'form':form})
 
 @login_required
-def restricted(request):
-    return render(request, 'pictaroo/restricted.html')
+def my_comments(request):
+    return render(request, 'pictaroo/myComments.html')
 
-#Use the login_required() decorator to ensure only those loggin can acces the view
 @login_required
-def user_logout(request):
-    #since we know the user is logged in, we can now just log them out
-    logout(request)
-    #take the user back to the homepage
-    return HttpResponseRedirect(reverse('index'))
+def my_favourites(request):
+    return render(request, 'pictaroo/myFavourites.html')
+
+@login_required
+def my_uploads(request):
+    return render(request, 'pictaroo/myUploads.html')
+
+
+# Chapter 14 Make Rango Tango - Create a Profile Registration view, corresponding view to handle the processing
+# of a UserProfileForm. the subsequent creation of a new UserProfile instance and instructing Django to
+# render any response with the new profile registration.
+@login_required
+def register_profile(request):
+    form = UserProfileForm()
+    if request.method == 'POST':
+        form = UserProfileForm(request.POST, request.FILES)
+        if form.is_valid():
+            user_profile = form.save(commit=False)
+            user_profile.user = request.user
+            user_profile.save()
+
+            return redirect('my_account')
+        else:
+            print(form.errors)
+
+    context_dict = {'form':form}
+
+    return render(request, 'pictaroo/profile_registration.html', context_dict)
+
+

@@ -8,19 +8,19 @@
     {% if category %}
         <h1>{{ category.name }}</h1>
 
-        {% if pages %}
+        {% if images %}
             <ul>
-                {% for page in pages %}
-                    <li><a href="{{ page.url }}">{{ page.title }}</a> </li>
+                {% for image in images %}
+                    <li><a href="{{ image.url }}">{{ image.title }}</a> </li>
                 {% endfor %}
             </ul>
         {% else %}
-            <strong>No pages currently in category. </strong>
+            <strong>No images currently in category. </strong>
         {% endif %}
         {% if user.is_authenticated %}
-        <a href="{% url 'add_page' category.slug %}">Add a Page</a>
+        <a href="{% url 'add_image' category.slug %}">Add a Image</a>
         {% else %}
-                Please register OR login to add a new page
+                Please register OR login to add a new Image
         {% endif %}
     {% else %}
         the specified category does not exist!

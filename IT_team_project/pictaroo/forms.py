@@ -1,6 +1,5 @@
 from django import forms
-from django.contrib.auth.models import User
-from pictaroo.models import Page, Category, UserProfile
+from pictaroo.models import Image, Category, UserProfile
 
 
 
@@ -17,11 +16,11 @@ class CategoryForm(forms.ModelForm):
         model = Category
         fields = ('name',)
 
-class PageForm(forms.ModelForm):
+class ImageForm(forms.ModelForm):
     title = forms.CharField(max_length=128,
-                            help_text="Please enter the title of the page.")
+                            help_text="Please enter the title of the Image.")
     url= forms.URLField(max_length=200,
-                        help_text="Please enter the URL of the page.")
+                        help_text="Please enter the URL of the image.")
     views = forms.IntegerField(widget=forms.HiddenInput(), initial=0)
 
     #This method is called upon before saving form data to a new model instance and thus
@@ -41,7 +40,7 @@ class PageForm(forms.ModelForm):
 
     class Meta:
             #Provide an association between the ModelForm and a model
-            model = Page
+            model = Image
 
             #what fields do we want to include in our form?
             #this way we dont need every field in the model present
@@ -52,14 +51,13 @@ class PageForm(forms.ModelForm):
             # or specify the fields to include (i.e. not include the category field)
             #fields = ('title', 'url', views)
 
-class UserForm(forms.ModelForm):
-    password = forms.CharField(widget=forms.PasswordInput())
 
-    class Meta:
-        model = User
-        fields = ('username', 'email', 'password')
-
+#Chapter 14 - Creating the User Profile Form class
 class UserProfileForm(forms.ModelForm):
+    website = forms.URLField(required=False)
+    picture = forms.ImageField(required=False)
+
+
     class Meta:
         model = UserProfile
-        fields = ('website', 'picture')
+        exclude = ('user',)

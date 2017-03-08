@@ -2,15 +2,15 @@
 {% load staticfiles %}
 
 {% block title_block %}
-    Add Page
+    Add Image
 {% endblock %}
 
 {% block body_block %}
 <div>
     {% if category %}
-    <h1>Add a Page to {{category.name}}</h1>
+    <h1>Add a Image to {{category.name}}</h1>
 
-        <form id ="page_form", method="post" action="/pictaroo/category/{{ category.slug }}/add_page/">
+        <form id ="image_form", method="post" action="/pictaroo/category/{{ category.slug }}/add_image/">
                 {% csrf_token %}
                 {% for hidden in form.hidden_fields %}
                     {{ hidden }}
@@ -22,7 +22,7 @@
                 {% endfor %}
 
 
-                <input type="submit" name="submit" value="Add new Page" />
+                <input type="submit" name="submit" value="Add new Image" />
 
         </form>
             {% else %}

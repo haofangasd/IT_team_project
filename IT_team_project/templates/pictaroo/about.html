@@ -7,9 +7,34 @@
 
 {% block body_block %}
     <div>
-        <h1>About Page</h1>
+        <h1>About Us</h1>
+        <h3>Welcome to Pictaroo...</h3>
+        <p>Pictaroo is an online image sharing community that allows people to both upload their own images, and view <br />
+        images that other people have chosen to share to the online Pictaroo community. It also allows users to sort images <br/>
+        by categories to view pictaures that suit their interests.
+        </p>
+        <p>Once registered, users can interact with each other by upvoting or downvoting images, and adding comments to their <br/>
+        own pictures and those shared by others. Users can save their favourite images uploaded by others in order to view them
+            <br/> at a later date.
+        </p>
+        <h4>This website is developed as part of the Internet Technology Group Project</h4>
+        <h2>FAQ</h2>
 
-    <p> visits: {{visits}}</p>
+        <h5>What is the purpose of this website? </h5>
+        <h5>Can I browse this website anonymously? </h5>
+        <h5>Can I add a category if my pictures don't suit existing categories ? </h5>
     </div>
 
+    <div>
+        <h3>Suggestion</h3>
+        <form action="action_page">
+            <input type="text" name="Suggestion" style="width:545px; height:50px"><br/>
+            <input type="submit" value="Submit">
+        </form>
+    </div>
+
+    <div>
+        <h3>Contact Us</h3>
+        <p>Jie & David in the MSc Computer Lab Rm 1024 all-day-every-day</p>
+    </div>
 {% endblock %}

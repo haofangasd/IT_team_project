@@ -9,13 +9,13 @@
             {% if user.is_authenticated %}
                 Welcome Back {{ user.username }}!
             {% else %}
-                Please Register your account
+                Please Register your account <a href="{% url 'registration_register' %}">Click Here!</a>
             {% endif %}
 
 
         <div>
             <div>
-                <h3>Most Liked Categories</h3>
+                <h3>Trending Categories</h3>
             </div>
             {% if categories %}
         <ul>
@@ -31,34 +31,21 @@
         </div>
 
         <div>
-             <h3>Most Viewed Pages </h3>
-            {% if pages %}
+             <h3>Trending Images</h3>
+            {% if images %}
                 <ul>
-                    {% for page in pages %}
+                    {% for image in images %}
                         <li>
-                            <a href="{{ page.url }}">{{ page.title}}</a>
+                            <a href="{{ image.url }}">{{ image.title}}</a>
                         </li>
                     {% endfor %}
                 </ul>
             {% else %}
-                <strong>No Pages currently in category. </strong>
+                <strong>No Images currently in category. </strong>
             {% endif %}
 
         <br />
 
-        {% if user.is_authenticated %}
 
-        {% else %}
-        <form id="login_form" method="post" action="{% url 'login' %}">
-        {% csrf_token %}
-        Username: <input type="text" name="username" value="" size="50" />
-        <br />
-        Password: <input type="password" name="password" value="" size="50" />
-        <br />
-        <input type="submit" value="submit" />
-        </form>
-        {% endif %}
-
-        <p> Page visits: {{ visits }}</p>
         </div>
 {% endblock %}

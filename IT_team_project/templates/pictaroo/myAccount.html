@@ -1,20 +1,39 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>My Account</title>
-</head>
-<body>
-    <div>
-        <h1>My Account</h1></br>
+{% extends "pictaroo/base.html" %}
+{% load staticfiles %}
 
-        <p>Welcome Back {{ user.username }}</p>
+{% block title %}{{ selecteduser.username }} Profile{% endblock %}
+
+{% block body_block %}
+        <h1>{{ selecteduser.username }} Profile</h1>
+
+        {% if userprofile.picture %}
+        <img src="{{ MEDIA_URL }}{{ userprofile.picture }}" width ="100" height="100"  alt="{{ selecteduser.username }}" />
+        {% else %}
+        <img src="https://goo.gl/images/QxjACh/" img= width="100" height="100" alt="{{user.username}}" />
+        {% endif %}
+
+        <br/><br/>
+
+        <div>
+
+            <div id="profile_data">
+                {% if selecteduser.username == user.username %}
+
+            <form method = "post" action = "." enctype ="multipart/form-data">
+                    {% csrf_token %}
+                    {{ form.as_p }}
+                    <input type="submit" value="Update" />
+            </form>
+            {% endif %}
+
+            </div>
+
+        <div id="edit_profile"></div>
 
         <a href='/pictaroo/my_comments/'>Comments</a>
 
         <a href='/pictaroo/my_favourites/'>Favourites</a>
 
         <a href='/pictaroo/my_uploads/'>Uploads</a>
-    </div>
-</body>
-</html>
+        </div>
+{% endblock %}
