@@ -79,7 +79,6 @@ def about(request):
 
     return response
 
-
 def show_category(request, category_name_slug):
     #create a context dictionary which we can pass
     #to the template rendering engine
@@ -164,6 +163,7 @@ def add_image(request, category_name_slug):
 
 @login_required
 def my_account(request, username):
+
     try:
         user = User.objects.get(username=username)
     except User.DoesNotExist:
@@ -180,7 +180,9 @@ def my_account(request, username):
         else:
             print(form.errors)
 
+
     return render(request, 'pictaroo/myAccount.html', {'userprofile': userprofile, 'selecteduser': user, 'form':form})
+
 
 @login_required
 def my_comments(request):

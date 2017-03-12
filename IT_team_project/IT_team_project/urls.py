@@ -26,7 +26,7 @@ from registration.backends.simple.views import RegistrationView
 #come back to this again, error appears
 class MyRegistrationView(RegistrationView):
     def get_success_url(self, user):
-        return url('my_account')
+        return '/pictaroo/'
 
 urlpatterns = [
 

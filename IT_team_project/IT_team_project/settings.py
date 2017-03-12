@@ -1,5 +1,6 @@
 import os
 
+
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -43,6 +44,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'pictaroo',
     'registration', #add in the registration package Chapter 11
+
 ]
 
 MIDDLEWARE = [
@@ -70,6 +72,7 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
                 'django.template.context_processors.media',
+
             ],
         },
     },
@@ -125,9 +128,8 @@ SESSION_EXPIRE_AT_BROWSER_CLOSE = False
 
 #Add two more variables, the root and URL
 MEDIA_ROOT = MEDIA_DIR
-MEDIA_URL = '/media/'
 
-LOGIN_URL ='/accounts/login/'
+MEDIA_URL = '/media/'
 
 # Static files (CSS, JavaScript, Images)
 STATICFILES_DIRS = [STATIC_DIR, ]
@@ -142,7 +144,9 @@ ACCOUNT_ACTIVATION_DAYS = 7
 # If True, the user will be automatically logged in.
 REGISTRATION_AUTO_LOGIN = True
 # The page you want users to arrive at after they successfully log in
-LOGIN_REDIRECT_URL = '/pictaroo/my_account/'
+#REVISIT THIS ---> NEED TO REDIRECT TO THE PROFILE PAGE.
+LOGIN_REDIRECT_URL = '/pictaroo/'
+
 # The page users are directed to if they are not logged in,
 # and are trying to access pages requiring authentication
 LOGIN_URL = '/accounts/login/'
